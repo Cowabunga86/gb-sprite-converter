@@ -1,41 +1,39 @@
 name: Build Windows EXE
 
-# Roda automaticamente a cada push na branch main,
-# e tambem pode ser disparado manualmente pela aba "Actions" no GitHub.
 on:
   push:
-      branches: [ main ]
-        workflow_dispatch:
+    branches: [ main ]
+  workflow_dispatch:
 
-        jobs:
-          build:
-              runs-on: windows-latest
+jobs:
+  build:
+    runs-on: windows-latest
 
-                  steps:
-                        - name: Baixar o codigo do repositorio
-                                uses: actions/checkout@v4
+    steps:
+      - name: Baixar o codigo do repositorio
+        uses: actions/checkout@v4
 
-                                      - name: Configurar Python
-                                              uses: actions/setup-python@v5
-                                                      with:
-                                                                python-version: "3.11"
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-                                                                      - name: Instalar dependencias
-                                                                              run: |
-                                                                                        pip install pyinstaller pillow numpy customtkinter
+      - name: Instalar dependencias
+        run: |
+          pip install pyinstaller pillow numpy customtkinter
 
-                                                                                              - name: Gerar o .exe da interface grafica (GUI)
-                                                                                                      run: |
-                                                                                                                pyinstaller --onefile --windowed --name "GB_Sprite_Converter" gb_sprite_gui.py
-                                                                                                                
-                                                                                                                      - name: Gerar o .exe da linha de comando (CLI)
-                                                                                                                              run: |
-                                                                                                                                        pyinstaller --onefile --name "gb_sprite_converter_cli" gb_sprite_converter.py
-                                                                                                                                        
-                                                                                                                                              - name: Publicar os .exe como artefato para download
-                                                                                                                                                      uses: actions/upload-artifact@v4
-                                                                                                                                                              with:
-                                                                                                                                                                        name: gb_sprite_converter-windows
-                                                                                                                                                                                  path: |
-                                                                                                                                                                                              dist/GB_Sprite_Converter.exe
-                                                                                                                                                                                                          dist/gb_sprite_converter_cli.exe
+      - name: Gerar o .exe da interface grafica
+        run: |
+          pyinstaller --onefile --windowed --name "GB_Sprite_Converter" gb_sprite_gui.py
+
+      - name: Gerar o .exe da linha de comando
+        run: |
+          pyinstaller --onefile --name "gb_sprite_converter_cli" gb_sprite_converter.py
+
+      - name: Publicar os .exe como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: gb_sprite_converter-windows
+          path: |
+            dist/GB_Sprite_Converter.exe
+            dist/gb_sprite_converter_cli.exe
