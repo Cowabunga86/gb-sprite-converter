@@ -1,65 +1,65 @@
 # gb-sprite-converter
 
-Ferramenta de conversão de sprites para o formato Game Boy / Game Boy Color,
-com interface gráfica moderna (CustomTkinter) e build automático do `.exe`
-via GitHub Actions.
+Converte imagens para o formato de sprite Game Boy / Game Boy Color (2bpp),
+com interface gráfica moderna e build automático de executáveis Windows via GitHub Actions.
 
-Inclui dois executáveis:
-- **GB_Sprite_Converter.exe** — interface gráfica (arraste, ajuste, clique em Converter)
-- **gb_sprite_converter_cli.exe** — linha de comando, útil para automatizar/batch
+## Download
 
-## Como gerar o .exe (sem instalar nada no seu PC)
+1. Vá na aba **Actions** deste repositório
+2. Clique no workflow **Build Windows EXE** mais recente (deve ter um ✓ verde)
+3. Role até **Artifacts** e baixe `gb_sprite_converter-windows`
+4. Extraia o `.zip` — você terá dois executáveis prontos para usar
 
-### 1. Criar o repositório no GitHub
-1. Acesse https://github.com/new
-2. Dê um nome (ex: `gb-sprite-converter`)
-3. Deixe como **Public** ou **Private**, tanto faz
-4. **Não** marque "Add a README" (já temos um) — clique em **Create repository**
+> O build roda automaticamente a cada push. Se ainda estiver em andamento, aguarde ~2 minutos.
 
-### 2. Subir estes arquivos
-Na página do repositório recém-criado, clique em **"uploading an existing file"**
-(link que aparece na tela inicial do repo vazio) e arraste estes 4 itens,
-mantendo a estrutura de pastas:
+## Executáveis
 
-```
-gb_sprite_core.py
-gb_sprite_converter.py
-gb_sprite_gui.py
-README.md
-.github/workflows/build.yml
-```
+- **GB_Sprite_Converter.exe** — interface gráfica (carregue uma imagem, ajuste tamanho, paleta e dithering, veja o preview e salve)
+- **gb_sprite_converter_cli.exe** — linha de comando, útil para automatizar conversões em lote
 
-> Importante: a pasta `.github/workflows/build.yml` precisa manter esse
-> caminho exato. Se o GitHub "achatar" a estrutura ao arrastar, crie a pasta
-> manualmente pela opção "Create new file" e digite o caminho completo
-> `.github/workflows/build.yml` no campo de nome do arquivo — o GitHub cria
-> as pastas automaticamente.
+## Uso — Interface Gráfica
 
-Clique em **Commit changes** para confirmar o upload.
+Dê duplo-clique em `GB_Sprite_Converter.exe`. A interface permite:
 
-### 3. Acompanhar o build
-1. Vá na aba **Actions** do repositório (menu superior)
-2. Você verá o workflow "Build Windows EXE" rodando automaticamente
-   (leva ~1-2 minutos)
-3. Quando o ícone ficar verde (✓), clique no workflow concluído
+- Carregar qualquer imagem (PNG, JPG, BMP...)
+- Definir o tamanho de saída em pixels (ex: 16x16, 32x32, 56x56)
+- Escolher a paleta: GB cinza clássico ou GB verde original
+- Escolher o modo de dithering: nenhum, ordered ou Floyd-Steinberg
+- Ver o preview antes de salvar
+- Exportar `.png` (imagem final) e `.asm` (dados de tile em formato RGBDS)
 
-### 4. Baixar o .exe
-Na página do workflow concluído, role até **Artifacts** (embaixo) e clique em
-`gb_sprite_converter-windows` para baixar um `.zip` contendo os dois executáveis.
-
-### 5. Usar
-
-**Interface gráfica** (recomendado): extraia o `.zip` e dê duplo-clique em
-`GB_Sprite_Converter.exe`. Carregue uma imagem, ajuste tamanho/paleta/dithering,
-veja o preview lado a lado e salve os arquivos finais.
-
-**Linha de comando**: abra o `cmd` ou PowerShell na pasta extraída e rode:
+## Uso — Linha de Comando
 
 ```
-gb_sprite_converter_cli.exe sua_imagem.png --size 56 56 --mode gb
+gb_sprite_converter_cli.exe <imagem> [opções]
 ```
 
-## Rodar de novo no futuro
-Qualquer novo push na branch `main` (ex: se você editar o script depois)
-dispara um novo build automaticamente. Também dá pra forçar manualmente
-pela aba Actions → "Build Windows EXE" → "Run workflow".
+Exemplos:
+
+```
+gb_sprite_converter_cli.exe sprite.png --size 16 16 --mode gb
+gb_sprite_converter_cli.exe arte.png --size 56 56 --mode gbc --dither floyd-steinberg
+```
+
+Opções:
+
+| Opção | Descrição | Padrão |
+|---|---|---|
+| `--size W H` | Tamanho de saída em pixels | `16 16` |
+| `--mode` | Paleta: `gb` (cinza) ou `gbc` (verde) | `gb` |
+| `--dither` | Dithering: `none`, `ordered` ou `floyd-steinberg` | `none` |
+| `--out` | Caminho de saída (sem extensão) | nome da imagem |
+
+## Disparar um novo build manualmente
+
+Vá em **Actions** → **Build Windows EXE** → **Run workflow** → **Run workflow**.
+Útil se quiser regenerar o executável sem fazer nenhuma alteração no código.
+
+## Tecnologias
+
+- Python 3.11
+- [Pillow](https://python-pillow.org/) — manipulação de imagens
+- [NumPy](https://numpy.org/) — dithering ordenado
+- [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter) — interface gráfica
+- [PyInstaller](https://pyinstaller.org/) — geração dos `.exe`
+- GitHub Actions — build automático na nuvem
